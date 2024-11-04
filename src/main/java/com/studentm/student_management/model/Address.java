@@ -1,5 +1,6 @@
 package com.studentm.student_management.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,12 +30,13 @@ public class Address {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "address_id")
     private Integer addressId;
-
+    
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
 
-    @Column(name = "address_line", length = 100)
+    @Column(name = "address_line", length = 100, nullable = false)
     private String street;
 
     @Column(name = "city", length = 100)
@@ -42,7 +44,7 @@ public class Address {
 
     @Column(name = "zip_code", length = 45)
     private String zipCode;
-    
+
     @Column(name = "state", length = 45)
     private String state;
 }

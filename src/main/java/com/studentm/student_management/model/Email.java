@@ -1,5 +1,6 @@
 package com.studentm.student_management.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,20 +15,24 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@IdClass(EmailId.class)
 @Table(name = "email", indexes = {
-    @Index(name = "student_email_fk_idx", columnList = "student_id")
+    @Index(name = "student_email_fk_idx", columnList = "student_id"),
+    @Index(name = "unique_email_idx", columnList = "email", unique = true)
 })
 public class Email implements Serializable {
 
     @Id
-    @Column(name = "email", length = 100, nullable = false)
-    private String email;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "email_id")
+    private Integer emailId;
 
-    @Id
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
+
+    @Column(name = "email", length = 100, nullable = false, unique = true)
+    private String email;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "email_type", nullable = false)
@@ -55,4 +60,3 @@ public class Email implements Serializable {
         this.updatedOn = LocalDateTime.now();
     }
 }
-

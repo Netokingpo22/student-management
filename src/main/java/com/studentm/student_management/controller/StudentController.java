@@ -1,13 +1,28 @@
 package com.studentm.student_management.controller;
 
+import com.studentm.student_management.exception.BadRequestException;
+import com.studentm.student_management.exception.ResourceNotFoundException;
 import com.studentm.student_management.model.Student;
 import com.studentm.student_management.service.StudentService;
+import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/students")
@@ -24,31 +39,53 @@ public class StudentController {
     @GetMapping("/{id}")
     public ResponseEntity<Student> getStudentById(@PathVariable Integer id) {
         Optional<Student> student = studentService.getStudentById(id);
-        return student.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        if (student.isEmpty()) {
+            throw new ResourceNotFoundException("Student not found with id: " + id);
+        }
+        return ResponseEntity.ok(student.get());
+    }
+
+    @GetMapping("/page")
+    public ResponseEntity<Page<Student>> getStudentsPage(
+            @RequestParam String searchTerm, 
+            @RequestParam int page, @RequestParam int size, 
+            @RequestParam(defaultValue = "lastName") String sortBy, 
+            @RequestParam(defaultValue = "asc") String sortDirection) {
+        return ResponseEntity.ok(studentService.searchStudents(searchTerm, page, size, sortBy, sortDirection));
     }
 
     @PostMapping
     public Student createStudent(@RequestBody Student student) {
+        if (student.getLastName() == null || student.getGender() == null) {
+            throw new BadRequestException("Last name and gender are required");
+        }
         return studentService.saveStudent(student);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<Student> updateStudent(@PathVariable Integer id, @RequestBody Student studentDetails) {
         Optional<Student> student = studentService.getStudentById(id);
-        if (student.isPresent()) {
-            Student updatedStudent = student.get();
-            updatedStudent.setFirstName(studentDetails.getFirstName());
-            updatedStudent.setLastName(studentDetails.getLastName());
-            updatedStudent.setMiddleName(studentDetails.getMiddleName());
-            updatedStudent.setGender(studentDetails.getGender());
-            return ResponseEntity.ok(studentService.saveStudent(updatedStudent));
-        } else {
+        if (student.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+        if (studentDetails.getLastName() == null || studentDetails.getGender() == null) {
+            throw new BadRequestException("Last name and gender are required");
+        }
+        Student updatedStudent = student.get();
+        updatedStudent.setFirstName(studentDetails.getFirstName());
+        updatedStudent.setLastName(studentDetails.getLastName());
+        updatedStudent.setMiddleName(studentDetails.getMiddleName());
+        updatedStudent.setGender(studentDetails.getGender());
+        return ResponseEntity.ok(studentService.saveStudent(updatedStudent));
+
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStudent(@PathVariable Integer id) {
+        Optional<Student> student = studentService.getStudentById(id);
+        if (student.isEmpty()) {
+            throw new ResourceNotFoundException("Student not found with id: " + id);
+        }
         studentService.deleteStudent(id);
         return ResponseEntity.noContent().build();
     }

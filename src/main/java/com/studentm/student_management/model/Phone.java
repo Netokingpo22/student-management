@@ -1,5 +1,6 @@
 package com.studentm.student_management.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,7 +23,8 @@ public class Phone {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "phone_id")
     private Integer phoneId;
-
+    
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
     private Student student;
