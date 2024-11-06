@@ -1,19 +1,16 @@
 package com.studentm.student_management.controller;
 
+import com.studentm.student_management.dto.StudentDTO;
 import com.studentm.student_management.exception.BadRequestException;
 import com.studentm.student_management.exception.ResourceNotFoundException;
 import com.studentm.student_management.model.Student;
 import com.studentm.student_management.service.StudentService;
-import java.time.LocalDateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +29,7 @@ public class StudentController {
     private StudentService studentService;
 
     @GetMapping
-    public List<Student> getAllStudents() {
+    public List<StudentDTO> getAllStudents() {
         return studentService.getAllStudents();
     }
 
@@ -47,9 +44,9 @@ public class StudentController {
 
     @GetMapping("/page")
     public ResponseEntity<Page<Student>> getStudentsPage(
-            @RequestParam String searchTerm, 
-            @RequestParam int page, @RequestParam int size, 
-            @RequestParam(defaultValue = "lastName") String sortBy, 
+            @RequestParam String searchTerm,
+            @RequestParam int page, @RequestParam int size,
+            @RequestParam(defaultValue = "lastName") String sortBy,
             @RequestParam(defaultValue = "asc") String sortDirection) {
         return ResponseEntity.ok(studentService.searchStudents(searchTerm, page, size, sortBy, sortDirection));
     }
