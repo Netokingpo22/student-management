@@ -1,27 +1,12 @@
 package com.studentm.student_management.model;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Id;
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Index;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
-
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
+import org.hibernate.annotations.BatchSize;
 
 @Entity
 @Getter
@@ -54,16 +39,19 @@ public class Student {
     private Gender gender;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Email> emails;
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @BatchSize(size = 10)
+    private Set<Email> emails;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Address> addresses;
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @BatchSize(size = 10)
+    private Set<Address> addresses;
 
     @JsonManagedReference
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Phone> phones;
+    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @BatchSize(size = 10)
+    private Set<Phone> phones;
 
     @Column(name = "created_on", updatable = false)
     private LocalDateTime createdOn;

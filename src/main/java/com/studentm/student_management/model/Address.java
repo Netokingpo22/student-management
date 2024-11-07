@@ -43,7 +43,7 @@ public class Address {
     private String city;
 
     @Column(name = "zip_code", length = 45)
-    private String zipCode;
+        private String zipCode;
 
     @Column(name = "state", length = 45)
     private String state;

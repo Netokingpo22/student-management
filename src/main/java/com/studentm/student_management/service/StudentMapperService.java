@@ -15,7 +15,6 @@ public class StudentMapperService {
         return new StudentDTO(
             student.getStudentId(),
             fullName,
-            student.getGender().name(),
             student.getEmails() != null && !student.getEmails().isEmpty(),
             student.getAddresses() != null && !student.getAddresses().isEmpty(),
             student.getPhones() != null && !student.getPhones().isEmpty()

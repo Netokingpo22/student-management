@@ -19,6 +19,7 @@ public class WebSecurityConfig {
         http.cors((cors) -> cors
                 .configurationSource(corsConfigurationSource())
         )
+                .csrf((csrf) -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                 .anyRequest().permitAll()
                 );
@@ -30,7 +31,10 @@ public class WebSecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOrigins(Arrays.asList("http://localhost:5173/"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        configuration.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
+        configuration.setExposedHeaders(Arrays.asList("Content-Type", "Authorization"));
+        configuration.setAllowCredentials(true);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource(); 
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }

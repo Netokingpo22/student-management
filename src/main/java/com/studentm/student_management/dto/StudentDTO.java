@@ -11,7 +11,6 @@ public class StudentDTO {
 
     private Integer studentId;
     private String fullName;
-    private String gender;
     private boolean hasEmails;
     private boolean hasAddresses;
     private boolean hasPhones;

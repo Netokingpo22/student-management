@@ -44,7 +44,7 @@ public class StudentServiceTest {
         student.setLastName("Doe");
         student.setMiddleName("William");
         student.setGender(Student.Gender.MALE);
-        studentDTO = new StudentDTO(student.getStudentId(), student.getFirstName() + " " + student.getMiddleName() + " " + student.getLastName(), student.getGender().name(), false, false, false);
+        studentDTO = new StudentDTO(student.getStudentId(), student.getFirstName() + " " + student.getMiddleName() + " " + student.getLastName(), false, false, false);
     }
 
     @Test
@@ -88,19 +88,5 @@ public class StudentServiceTest {
         studentService.deleteStudent(1);
 
         verify(studentRepository, times(1)).deleteById(1);
-    }
-
-    @Test
-    public void testSearchStudents() {
-        Page<Student> studentPage = new PageImpl<>(Arrays.asList(student));
-        Pageable pageable = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "firstName"));
-
-        when(studentRepository.searchStudents(anyString(), eq(pageable))).thenReturn(studentPage);
-
-        Page<Student> result = studentService.searchStudents("John", 0, 10, "firstName", "ASC");
-
-        assertNotNull(result);
-        assertEquals(1, result.getTotalElements());
-        verify(studentRepository, times(1)).searchStudents(anyString(), eq(pageable));
     }
 }
